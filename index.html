@@ -3,485 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EncodeForge</title>
-    <script src="jsbarcode.min.js"></script>
-    <script src="qrious.min.js"></script>
+    <title>CodeCraft — QR & Barcode Generator</title>
+    <link rel="stylesheet" href="style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        :root {
-            /* Light theme colors */
-            --accent: #56a0ef;
-            --bg-primary: #f8f9fa;
-            --bg-secondary: #fff;
-            --bg-tertiary: #f8f9fa;
-            --text-primary: #333;
-            --text-secondary: #495057;
-            --text-muted: #6c757d;
-            --border-color: #e9ecef;
-            --border-light: #dee2e6;
-            --accent-primary: #495057;
-            --accent-secondary: #6c757d;
-            --accent-hover: #343a40;
-            --danger: #dc3545;
-            --shadow-light: rgba(0, 0, 0, 0.05);
-            --shadow-medium: rgba(0, 0, 0, 0.1);
-            --clear-bg: rgba(108, 117, 125, 0.2);
-            --clear-hover-bg: rgba(220, 53, 69, 0.2);
-        }
 
-        .dark {
-            /* Dark theme colors */
-            --bg-primary: #1a1d23;
-            --bg-secondary: #2d3748;
-            --bg-tertiary: #4a5568;
-            --text-primary: #e9ecef;
-            --text-secondary: #e9ecef;
-            --text-muted: #a0aec0;
-            --border-color: #4a5568;
-            --border-light: #718096;
-            --accent-primary: #718096;
-            --accent-secondary: #a0aec0;
-            --accent-hover: #718096;
-            --danger: #dc3545;
-            --shadow-light: rgba(0, 0, 0, 0.2);
-            --shadow-medium: rgba(0, 0, 0, 0.2);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            transition: all 0.3s ease;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 450px;
-            margin: 0 auto;
-            padding: 8px;
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            box-shadow: 0 2px 10px var(--shadow-light);
-            margin-top: 5px;
-            margin-bottom: 5px;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        header h1 {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .brand-icon {
-            font-size: 18px;
-            color: var(--accent-primary);
-        }
-
-        .controls {
-            display: flex;
-            gap: 8px;
-            justify-content: space-evenly;
-            align-items: center;
-        }
-
-        .settings-container {
-            position: relative;
-        }
-
-        .settings-icon, .theme-icon, .caps-icon {
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: var(--text-muted);
-        }
-
-        .theme-icon.rotated, .settings-icon.spin  {
-            transform: rotate(180deg);
-        }
-
-        .caps-icon.active {
-            color: var(--accent);
-            font-size: 20px;
-            transform: translateY(-1px);
-        }
-
-        .settings-icon:hover, .theme-icon:hover, .caps-icon:hover {
-            color: var(--accent-hover);
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 8px;
-            justify-content: center;
-        }
-
-        .nav-btn {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 6px 12px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.2s ease;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .nav-btn i {
-            font-size: 14px;
-        }
-
-
-
-        .nav-btn.active {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) !important;
-            color: #fff !important;
-            border-color: var(--accent-primary) !important;
-            box-shadow: 0 4px 12px rgba(73, 80, 87, 0.4) !important;
-            transform: translateY(-1px) !important;
-        }
-
-        .nav-btn:hover:not(.active) {
-            background: var(--border-color);
-            border-color: var(--border-light);
-        }
-
-        .input-section {
-            margin-bottom: 8px;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-group textarea, .input-group input {
-            width: 100%;
-            padding: 6px 30px 6px 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 50px;
-            font-size: 12px;
-            resize: vertical;
-            min-height: 35px;
-            background: var(--bg-tertiary);
-        }
-
-        .input-group textarea {
-            border-radius: 20px;
-        }
-
-        .clear-icon {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--clear-bg);
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 12px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .clear-icon:hover {
-            background: var(--clear-hover-bg);
-            color: var(--danger);
-        }
-
-        .clear-icon.visible {
-            display: flex;
-        }
-
-        .input-group textarea, .input-group input {
-            color: var(--text-primary);
-        }
-
-        .output-section {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 10px;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-        .dark .output-section {
-            background: #4a5568;
-            border-color: #718096;
-        }
-
-        .output-area {
-            min-height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 8px;
-        }
-
-        .placeholder {
-            color: var(--text-muted);
-            font-size: 12px;
-        }
-
-        .download-area {
-            display: flex;
-            gap: 6px;
-            justify-content: center;
-        }
-
-        .download-area button {
-            padding: 3px 6px;
-            background: var(--accent-primary);
-            color: #fff;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 9px;
-            transition: all 0.2s ease;
-            margin: 0 2px;
-        }
-
-        .download-area button:hover {
-            background: var(--accent-hover);
-            transform: translateY(-1px);
-        }
-
-        .saved-gallery {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 6px;
-            margin-top: 6px;
-        }
-
-        .dark .saved-gallery {
-            background: #4a5568;
-            border-color: #718096;
-        }
-
-
-
-        .gallery-items {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 6px;
-            margin-bottom: 6px;
-        }
-
-        .gallery-item {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 4px;
-            text-align: center;
-            position: relative;
-        }
-
-        .dark .gallery-item {
-            background: #2d3748;
-            border-color: #4a5568;
-        }
-
-        .gallery-item canvas {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .gallery-item .item-info {
-            font-size: 9px;
-            color: var(--text-muted);
-            margin-top: 1px;
-        }
-
-        .gallery-item .item-info:first-of-type {
-            margin-top: 0;
-        }
-
-        .gallery-item .delete-btn {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            background: var(--danger);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 12px;
-            height: 12px;
-            font-size: 10px;
-            cursor: pointer;
-        }
-
-        .clear-btn {
-            background: var(--danger);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 4px 8px;
-            font-size: 9px;
-            cursor: pointer;
-        }
-
-        .gallery-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-
-        .gallery-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .gallery-title input[type="checkbox"] {
-            width: 12px;
-            height: 12px;
-            cursor: pointer;
-        }
-
-        .gallery-title label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            margin: 0;
-        }
-
-        .dark .gallery-title label {
-            color: #e9ecef;
-        }
-
-        .filter-buttons {
-            display: flex;
-            gap: 5px;
-        }
-
-        .filter-btn {
-            padding: 2px 8px;
-            background: var(--border-color);
-            border: none;
-            border-radius: 20px;
-            font-size: 9px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .filter-btn.active {
-            background: var(--accent-primary);
-            color: white;
-        }
-
-        .dark .filter-btn {
-            background: #4a5568;
-            color: #a0aec0;
-        }
-
-        .dark .filter-btn.active {
-            background: #718096;
-            color: white;
-        }
-
-        .settings-dropdown {
-            position: absolute;
-            top: 30px;
-            right: 0;
-            background: #fff;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            min-width: 200px;
-        }
-
-        .dark .settings-dropdown {
-            background: #2d3748;
-            border-color: #4a5568;
-        }
-
-        .settings-group {
-            margin-bottom: 10px;
-        }
-
-        .settings-group:last-child {
-            margin-bottom: 0;
-        }
-
-        .settings-group h3 {
-            margin-bottom: 6px;
-            font-size: 12px;
-            color: #495057;
-            font-weight: 500;
-        }
-
-        .dark .settings-group h3 {
-            color: #e9ecef;
-        }
-
-        .settings-group label {
-            display: block;
-            margin-bottom: 4px;
-            font-size: 10px;
-            color: #6c757d;
-        }
-
-        .dark .settings-group label {
-            color: #a0aec0;
-        }
-
-        .settings-group input, .settings-group select {
-            width: 100%;
-            padding: 2px 6px;
-            border: 1px solid #e9ecef;
-            border-radius: 20px;
-            margin-top: 2px;
-            font-size: 10px;
-            background: #f8f9fa;
-            height: 24px;
-        }
-
-        .dark .settings-group input, .dark .settings-group select {
-            background: #4a5568;
-            border-color: #718096;
-            color: #e9ecef;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="bi bi-magic brand-icon"></i><span>EncodeForge</span></h1>
+            <h1><i class="bi bi-magic brand-icon"></i><span>CodeCraft</span><small>QR & Barcode Generator</small></h1>
             <div class="controls">
-                <i class="bi bi-type caps-icon" id="caps-toggle" onclick="toggleCaps()"></i>
+                <i class="bi bi-type caps-icon" id="caps-toggle" onclick="toggleCaps()" title="Toggle Caps (Alt+C)"></i>
                 <i class="bi bi-circle-half theme-icon" onclick="toggleTheme()"></i>
+                <div class="info-container">
+                    <i class="bi bi-info-circle-fill info-icon" onclick="toggleInfo()" title="About & Shortcuts"></i>
+                    <div id="info-dropdown" class="info-dropdown hidden">
+                        <h3>About CodeCraft</h3>
+                        <p>CodeCraft helps you generate and customize QR codes and barcodes.</p>
+                        <ul>
+                            <li><strong>QR Codes:</strong> For URLs, text, and more.</li>
+                            <li><strong>Barcodes:</strong> CODE128, CODE39, EAN13 supported.</li>
+                            <li><strong>Customization:</strong> Size, color, and background options.</li>
+                            <li><strong>Download:</strong> Export as PNG or SVG files.</li>
+                            <li><strong>Save:</strong> Pin your favorite codes for later.</li>
+                        </ul>
+                        <div id="shortcuts-container"></div>
+                    </div>
+                </div>
                 <div class="settings-container">
                     <i class="bi bi-gear-fill settings-icon" onclick="toggleSettings()"></i>
                     <div id="settings-dropdown" class="settings-dropdown hidden">
@@ -510,361 +58,64 @@
             </div>
         </header>
 
-        <nav class="nav-buttons">
-            <button class="nav-btn active" onclick="switchTab('qr')">
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="qr" onclick="switchTab('qr')" type="button" title="Press Shift+Tab to switch">
                 <i class="bi bi-qr-code"></i>
                 <span>QR Code</span>
             </button>
-            <button class="nav-btn" onclick="switchTab('barcode')">
+            <button class="tab-btn" data-tab="barcode" onclick="switchTab('barcode')" type="button" title="Press Shift+Tab to switch">
                 <i class="bi bi-upc"></i>
                 <span>Barcode</span>
             </button>
         </nav>
 
-        <div class="input-section">
-            <div id="qr-input" class="input-group">
-                <div class="input-wrapper">
+        <div class="inputs">
+            <div id="qr-input" class="field">
+                <div class="field-wrapper">
                     <textarea id="qr-text" placeholder="Enter text, URL, or content"></textarea>
-                    <i class="bi bi-x-circle clear-icon" onclick="clearInput('qr')"></i>
+                    <i class="bi bi-x-circle clear-btn hidden" onclick="clearInput('qr')"></i>
                 </div>
             </div>
-            <div id="barcode-input" class="input-group hidden">
-                <div class="input-wrapper">
+            <div id="barcode-input" class="field hidden">
+                <div class="field-wrapper">
                     <input type="text" id="barcode-text" placeholder="Enter text or numbers">
-                    <i class="bi bi-x-circle clear-icon" onclick="clearInput('barcode')"></i>
+                    <i class="bi bi-x-circle clear-btn hidden" onclick="clearInput('barcode')"></i>
                 </div>
             </div>
         </div>
 
-        <div class="output-section">
-            <div id="output" class="output-area">
+        <div class="preview">
+            <div id="output" class="preview-area">
                 <div class="placeholder">Enter content to generate code</div>
             </div>
-            <div id="download-section" class="download-area hidden">
-                <button onclick="saveToPage()"><i class="bi bi-pin-angle"></i> Pin</button>
+            <div id="download-section" class="actions hidden">
+                <button onclick="saveToPage()" title="Press Ctrl+S to pin"><i class="bi bi-pin-angle"></i> Pin</button>
                 <button onclick="downloadCode('png')"><i class="bi bi-cloud-download"></i> PNG</button>
                 <button onclick="downloadCode('svg')"><i class="bi bi-filetype-svg"></i> SVG</button>
             </div>
         </div>
 
-        <div id="saved-gallery" class="saved-gallery hidden">
+        <div id="saved-gallery" class="gallery hidden">
             <div class="gallery-header">
                 <div class="gallery-title">
                     <input type="checkbox" id="toggle-saved" checked onchange="toggleSavedVisibility()">
                     <label for="toggle-saved">Saved Codes</label>
+                    <span class="saved-count hidden" title="Saved codes count">0</span>
                 </div>
-                <div class="filter-buttons">
-                    <button onclick="filterGallery('all')" class="filter-btn active">All</button>
-                    <button onclick="filterGallery('qr')" class="filter-btn">QR</button>
-                    <button onclick="filterGallery('barcode')" class="filter-btn">Barcode</button>
+                <div class="gallery-filters">
+                    <button data-filter="all" onclick="filterGallery('all')" class="filter-button active" type="button">All</button>
+                    <button data-filter="qr" onclick="filterGallery('qr')" class="filter-button" type="button">QR</button>
+                    <button data-filter="barcode" onclick="filterGallery('barcode')" class="filter-button" type="button">Barcode</button>
                 </div>
             </div>
-            <button onclick="clearGallery()" class="clear-btn">Clear All</button>
-            <div id="gallery-items" class="gallery-items"></div>
+            <button onclick="clearGallery()" class="gallery-clear-btn">Clear All</button>
+            <div id="gallery-items" class="gallery-grid"></div>
+            <div class="pagination-container"></div>
         </div>
-
-
     </div>
 
-    <script>
-        let currentTab = 'qr';
-        let generatedCanvas = null;
-        let lastBarcodeText = '';
-        let isDark = false;
-        let settingsOpen = false;
-        let pendingBarcodeText = '';
-        let enforceUppercase = false;
-
-        function applyCasing(value) {
-            return enforceUppercase ? value.toUpperCase() : value;
-        }
-
-        function switchTab(tab) {
-            currentTab = tab;
-            
-            // Update nav buttons
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.closest('.nav-btn').classList.add('active');
-            
-            // Show/hide inputs
-            document.getElementById('qr-input').classList.toggle('hidden', tab !== 'qr');
-            document.getElementById('barcode-input').classList.toggle('hidden', tab !== 'barcode');
-            
-            // Show/hide settings
-            document.getElementById('qr-settings').classList.toggle('hidden', tab !== 'qr');
-            document.getElementById('barcode-settings').classList.toggle('hidden', tab !== 'barcode');
-            
-            clearOutput();
-        }
-
-        function clearOutput() {
-            document.getElementById('output').innerHTML = '<div class="placeholder">Enter content to generate code</div>';
-            document.getElementById('download-section').classList.add('hidden');
-            generatedCanvas = null;
-        }
-
-        function generateQR() {
-            const rawText = document.getElementById('qr-text').value.trim();
-            if (!rawText) {
-                clearOutput();
-                return;
-            }
-
-            const text = applyCasing(rawText);
-
-            try {
-                const canvas = document.createElement('canvas');
-                const qr = new QRious({
-                    element: canvas,
-                    value: text,
-                    size: parseInt(document.getElementById('qr-size').value),
-                    foreground: document.getElementById('qr-color').value,
-                    background: document.getElementById('qr-bg-color').value
-                });
-                
-                generatedCanvas = canvas;
-                document.getElementById('output').innerHTML = '';
-                document.getElementById('output').appendChild(canvas);
-                document.getElementById('download-section').classList.remove('hidden');
-            } catch (error) {
-                document.getElementById('output').innerHTML = '<div class="placeholder">Error generating QR code</div>';
-            }
-        }
-
-        function generateBarcode() {
-            const rawText = document.getElementById('barcode-text').value.trim();
-            console.log('Barcode text length:', rawText.length);
-            if (!rawText) {
-                clearOutput();
-                return;
-            }
-
-            if (rawText.length > 15) {
-                console.log('Showing warning for long text');
-                pendingBarcodeText = rawText;
-                document.getElementById('barcode-text').value = rawText;
-                document.getElementById('output').innerHTML = '<div style="text-align: center; color: var(--danger); font-size: 12px; font-weight: 600; padding: 12px; background: rgba(220, 53, 69, 0.12); border-radius: 10px;">⚠️ Text too long for barcode<br><button onclick="switchToQR()" style="margin-top: 10px; padding: 6px 16px; background: var(--accent-primary); color: #fff; border: none; border-radius: 999px; font-size: 11px;">Use QR Code Instead</button></div>';
-                document.getElementById('download-section').classList.add('hidden');
-                return;
-            }
-
-            const text = applyCasing(rawText);
-
-            try {
-                const canvas = document.createElement('canvas');
-                JsBarcode(canvas, text, {
-                    format: document.getElementById('barcode-format').value,
-                    width: parseFloat(document.getElementById('barcode-width').value),
-                    height: parseInt(document.getElementById('barcode-height').value),
-                    lineColor: document.getElementById('barcode-color').value,
-                    background: document.getElementById('barcode-bg-color').value,
-                    displayValue: true
-                });
-
-                generatedCanvas = canvas;
-                document.getElementById('output').innerHTML = '';
-                document.getElementById('output').appendChild(canvas);
-                document.getElementById('download-section').classList.remove('hidden');
-            } catch (error) {
-                document.getElementById('output').innerHTML = '<div class="placeholder">Error generating barcode</div>';
-            }
-        }
-
-        function switchToQR() {
-            const barcodeText = (pendingBarcodeText || document.getElementById('barcode-text').value).trim();
-            pendingBarcodeText = '';
-            currentTab = 'qr';
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('.nav-btn').classList.add('active');
-            document.getElementById('qr-input').classList.remove('hidden');
-            document.getElementById('barcode-input').classList.add('hidden');
-            document.getElementById('qr-settings').classList.remove('hidden');
-            document.getElementById('barcode-settings').classList.add('hidden');
-            document.getElementById('qr-text').value = barcodeText;
-            generateQR();
-        }
-
-        let savedCodes = [];
-
-        function saveToPage() {
-            if (!generatedCanvas) return;
-            
-            const savedItem = {
-                dataURL: generatedCanvas.toDataURL(),
-                type: currentTab,
-                content: currentTab === 'qr' ? applyCasing(document.getElementById('qr-text').value.trim()) : applyCasing(document.getElementById('barcode-text').value.trim()),
-                timestamp: new Date().toLocaleString()
-            };
-            
-            savedCodes.push(savedItem);
-            localStorage.setItem('savedCodes', JSON.stringify(savedCodes));
-            updateGallery();
-        }
-
-        function updateGallery() {
-            const gallery = document.getElementById('saved-gallery');
-            const galleryItems = document.getElementById('gallery-items');
-            
-            if (savedCodes.length === 0) {
-                gallery.classList.add('hidden');
-                return;
-            }
-            
-            gallery.classList.remove('hidden');
-            galleryItems.innerHTML = '';
-            
-            savedCodes.forEach((item, index) => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'gallery-item';
-                itemDiv.innerHTML = `
-                    <button class="delete-btn" onclick="deleteItem(${index})">×</button>
-                    <div class="item-info">${item.content.length > 20 ? item.content.substring(0, 20) + '...' : item.content}</div>
-                    <img src="${item.dataURL}" style="max-width: 100%; height: auto;">
-                    <div class="item-info">${item.timestamp}</div>
-                `;
-                itemDiv.setAttribute('data-type', item.type);
-                galleryItems.appendChild(itemDiv);
-            });
-        }
-
-        function deleteItem(index) {
-            savedCodes.splice(index, 1);
-            localStorage.setItem('savedCodes', JSON.stringify(savedCodes));
-            updateGallery();
-        }
-
-        function clearGallery() {
-            savedCodes = [];
-            localStorage.removeItem('savedCodes');
-            updateGallery();
-        }
-
-        function filterGallery(type) {
-            // Update active filter button
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Show/hide items based on filter
-            const items = document.querySelectorAll('.gallery-item');
-            items.forEach(item => {
-                if (type === 'all' || item.getAttribute('data-type') === type) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        function toggleSavedVisibility() {
-            const checkbox = document.getElementById('toggle-saved');
-            const galleryItems = document.getElementById('gallery-items');
-            const filterButtons = document.querySelector('.filter-buttons');
-            const clearBtn = document.querySelector('.clear-btn');
-            
-            if (checkbox.checked) {
-                galleryItems.style.display = 'grid';
-                filterButtons.style.display = 'flex';
-                clearBtn.style.display = 'inline-block';
-            } else {
-                galleryItems.style.display = 'none';
-                filterButtons.style.display = 'none';
-                clearBtn.style.display = 'none';
-            }
-        }
-
-        function loadSavedCodes() {
-            const saved = localStorage.getItem('savedCodes');
-            if (saved) {
-                savedCodes = JSON.parse(saved);
-                updateGallery();
-            }
-        }
-
-        function downloadCode(format) {
-            if (!generatedCanvas) return;
-            
-            const link = document.createElement('a');
-            link.download = `${currentTab}_code.${format}`;
-            link.href = generatedCanvas.toDataURL();
-            link.click();
-        }
-
-        function toggleSettings() {
-            settingsOpen = !settingsOpen;
-            document.getElementById('settings-dropdown').classList.toggle('hidden', !settingsOpen);
-            document.querySelector('.settings-icon').classList.toggle('spin', settingsOpen);
-        }
-
-        function clearInput(type) {
-            if (type === 'qr') {
-                document.getElementById('qr-text').value = '';
-                generateQR();
-            } else {
-                document.getElementById('barcode-text').value = '';
-                generateBarcode();
-            }
-            toggleClearIcon(type);
-        }
-
-        function toggleClearIcon(type) {
-            const input = document.getElementById(type + '-text');
-            const icon = input.parentElement.querySelector('.clear-icon');
-            
-            if (input.value.trim()) {
-                icon.classList.add('visible');
-            } else {
-                icon.classList.remove('visible');
-            }
-        }
-
-        function toggleTheme() {
-            isDark = !isDark;
-            document.body.classList.toggle('dark', isDark);
-            document.querySelector('.theme-icon').classList.toggle('rotated', isDark);
-        }
-
-        function toggleCaps() {
-            enforceUppercase = !enforceUppercase;
-            document.getElementById('caps-toggle').classList.toggle('active', enforceUppercase);
-            if (currentTab === 'qr') {
-                generateQR();
-            } else {
-                generateBarcode();
-            }
-        }
-
-        // Auto-generation
-        document.addEventListener('DOMContentLoaded', function() {
-            // QR auto-generation
-            document.getElementById('qr-text').addEventListener('input', function() {
-                generateQR();
-                toggleClearIcon('qr');
-            });
-            document.getElementById('qr-size').addEventListener('input', generateQR);
-            document.getElementById('qr-color').addEventListener('input', generateQR);
-            document.getElementById('qr-bg-color').addEventListener('input', generateQR);
-            
-            // Barcode auto-generation
-            document.getElementById('barcode-text').addEventListener('input', function() {
-                generateBarcode();
-                toggleClearIcon('barcode');
-            });
-            document.getElementById('barcode-format').addEventListener('change', generateBarcode);
-            document.getElementById('barcode-width').addEventListener('input', generateBarcode);
-            document.getElementById('barcode-height').addEventListener('input', generateBarcode);
-            document.getElementById('barcode-color').addEventListener('input', generateBarcode);
-            document.getElementById('barcode-bg-color').addEventListener('input', generateBarcode);
-            
-            // Load saved codes on page load
-            loadSavedCodes();
-            
-            // Close settings when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.settings-dropdown') && !e.target.closest('.settings-icon')) {
-                    if (settingsOpen) toggleSettings();
-                }
-            });
-        });
-    </script>
+    <script src="vendor/jsbarcode.min.js"></script>
+    <script src="vendor/qrious.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
