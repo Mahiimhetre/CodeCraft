@@ -375,7 +375,7 @@ header {
      padding: 12px;
      box-shadow: 0 4px 12px var(--shadow-light);
      z-index: 1000;
-     min-width 220px;
+     min-width: 220px;
      line-height: 1.4;
  }
  .info-dropdown::before {
