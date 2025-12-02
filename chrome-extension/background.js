@@ -10,18 +10,13 @@ let sidePanelOpen = false;
 // Listen for messages from popup or sidepanel
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'openSidePanel') {
-    // Get the window ID from sender or use current window
-    chrome.windows.getCurrent().then(window => {
-      chrome.sidePanel.open({ windowId: window.id });
-      sidePanelOpen = true; // Track that side panel is now open
-      // Disable popup when side panel opens
-      chrome.action.setPopup({ popup: '' });
-      sendResponse({ success: true });
-    }).catch(error => {
-      console.error('Error opening side panel:', error);
-      sendResponse({ success: false, error: error.message });
-    });
-    return true; // Keep message channel open for async response
+    // Side panel is already opened by popup.js (has user gesture context)
+    // Just track the state here
+    sidePanelOpen = true;
+    // Disable popup when side panel opens
+    chrome.action.setPopup({ popup: '' });
+    sendResponse({ success: true });
+    return true;
   } else if (request.action === 'sidePanelOpened') {
     // Track that side panel is now open
     sidePanelOpen = true;
